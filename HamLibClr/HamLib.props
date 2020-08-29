@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <ImportGroup Label="PropertySheets" />
+    <PropertyGroup Label="UserMacros"  Condition="'$(Platform)'=='Win32'">
+        <HAMLIBROOT>D:\dev\hamlib-w32-3.3\</HAMLIBROOT>
+        <HAMLIBPLATFORM>x86</HAMLIBPLATFORM>
+    </PropertyGroup>
+    <PropertyGroup Label="UserMacros"  Condition="'$(Platform)'=='x64'">
+        <HAMLIBROOT>D:\dev\hamlib-w64-3.3\</HAMLIBROOT>
+        <HAMLIBPLATFORM>x64</HAMLIBPLATFORM>
+    </PropertyGroup>
+    <PropertyGroup />
+    <ItemDefinitionGroup>
+        <ClCompile>
+            <AdditionalIncludeDirectories>$(HAMLIBROOT)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+        </ClCompile>
+        <Link>
+            <AdditionalLibraryDirectories>$(HAMLIBROOT)lib\msvc\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+            <AdditionalDependencies>libhamlib-2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+        </Link>
+    </ItemDefinitionGroup>
+    <ItemGroup>
+        <BuildMacro Include="HAMLIBROOT">
+            <Value>$(HAMLIBROOT)</Value>
+        </BuildMacro>
+    </ItemGroup>
+</Project>

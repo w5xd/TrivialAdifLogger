@@ -1,0 +1,8 @@
+.vs
+*.swp
+*.user
+bin/
+Release/
+Debug/
+DigiRite
+MsMsm

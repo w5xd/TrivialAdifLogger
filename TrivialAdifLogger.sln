@@ -1,0 +1,63 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.1169
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrivialAdifLogger", "TrivialAdifLogger\TrivialAdifLogger.csproj", "{F99180DD-2FC3-4727-8AF3-BA2F42697DA4}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HamLibClr", "HamLibClr\HamLibClr.vcxproj", "{AB1548D8-BE86-4DE1-B01E-44F82616DF20}"
+EndProject
+Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "InstallX86", "InstallX86\InstallX86.wixproj", "{EB862AB0-34AA-4419-826B-275806DB103E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{AB1548D8-BE86-4DE1-B01E-44F82616DF20} = {AB1548D8-BE86-4DE1-B01E-44F82616DF20}
+		{F99180DD-2FC3-4727-8AF3-BA2F42697DA4} = {F99180DD-2FC3-4727-8AF3-BA2F42697DA4}
+	EndProjectSection
+EndProject
+Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "InstallX64", "InstallX64\InstallX64.wixproj", "{0EE0D305-07F7-40B7-899D-C6BE8F2449B3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{AB1548D8-BE86-4DE1-B01E-44F82616DF20} = {AB1548D8-BE86-4DE1-B01E-44F82616DF20}
+		{F99180DD-2FC3-4727-8AF3-BA2F42697DA4} = {F99180DD-2FC3-4727-8AF3-BA2F42697DA4}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F99180DD-2FC3-4727-8AF3-BA2F42697DA4}.Debug|x64.ActiveCfg = Debug|x64
+		{F99180DD-2FC3-4727-8AF3-BA2F42697DA4}.Debug|x64.Build.0 = Debug|x64
+		{F99180DD-2FC3-4727-8AF3-BA2F42697DA4}.Debug|x86.ActiveCfg = Debug|x86
+		{F99180DD-2FC3-4727-8AF3-BA2F42697DA4}.Debug|x86.Build.0 = Debug|x86
+		{F99180DD-2FC3-4727-8AF3-BA2F42697DA4}.Release|x64.ActiveCfg = Release|x64
+		{F99180DD-2FC3-4727-8AF3-BA2F42697DA4}.Release|x64.Build.0 = Release|x64
+		{F99180DD-2FC3-4727-8AF3-BA2F42697DA4}.Release|x86.ActiveCfg = Release|x86
+		{F99180DD-2FC3-4727-8AF3-BA2F42697DA4}.Release|x86.Build.0 = Release|x86
+		{AB1548D8-BE86-4DE1-B01E-44F82616DF20}.Debug|x64.ActiveCfg = Debug|x64
+		{AB1548D8-BE86-4DE1-B01E-44F82616DF20}.Debug|x64.Build.0 = Debug|x64
+		{AB1548D8-BE86-4DE1-B01E-44F82616DF20}.Debug|x86.ActiveCfg = Debug|Win32
+		{AB1548D8-BE86-4DE1-B01E-44F82616DF20}.Debug|x86.Build.0 = Debug|Win32
+		{AB1548D8-BE86-4DE1-B01E-44F82616DF20}.Release|x64.ActiveCfg = Release|x64
+		{AB1548D8-BE86-4DE1-B01E-44F82616DF20}.Release|x64.Build.0 = Release|x64
+		{AB1548D8-BE86-4DE1-B01E-44F82616DF20}.Release|x86.ActiveCfg = Release|Win32
+		{AB1548D8-BE86-4DE1-B01E-44F82616DF20}.Release|x86.Build.0 = Release|Win32
+		{EB862AB0-34AA-4419-826B-275806DB103E}.Debug|x64.ActiveCfg = Debug|x86
+		{EB862AB0-34AA-4419-826B-275806DB103E}.Debug|x86.ActiveCfg = Debug|x86
+		{EB862AB0-34AA-4419-826B-275806DB103E}.Release|x64.ActiveCfg = Release|x86
+		{EB862AB0-34AA-4419-826B-275806DB103E}.Release|x86.ActiveCfg = Release|x86
+		{EB862AB0-34AA-4419-826B-275806DB103E}.Release|x86.Build.0 = Release|x86
+		{0EE0D305-07F7-40B7-899D-C6BE8F2449B3}.Debug|x64.ActiveCfg = Debug|x86
+		{0EE0D305-07F7-40B7-899D-C6BE8F2449B3}.Debug|x86.ActiveCfg = Debug|x86
+		{0EE0D305-07F7-40B7-899D-C6BE8F2449B3}.Release|x64.ActiveCfg = Release|x86
+		{0EE0D305-07F7-40B7-899D-C6BE8F2449B3}.Release|x64.Build.0 = Release|x86
+		{0EE0D305-07F7-40B7-899D-C6BE8F2449B3}.Release|x86.ActiveCfg = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6C196971-26B2-4F42-8305-4DC71DF5A147}
+	EndGlobalSection
+EndGlobal

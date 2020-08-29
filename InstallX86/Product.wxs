@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?define VersionNumber = 1.0.0.0 ?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Product Id="*"  Language="1033" 
+             Name="Trivial Adif Logger x86"
+             Version="$(var.VersionNumber)" 
+             Manufacturer="WriteLog Contesting Software, LLC" 
+             UpgradeCode="823e8c1e-46b9-43a9-a199-a58b9a898344">
+        <!--Same upgrade code for x86 and x64-->
+        <Package InstallerVersion="301" Compressed="yes" InstallScope="perMachine" Platform="x86" />
+
+		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+        <PropertyRef Id="WIX_IS_NETFRAMEWORK_462_OR_LATER_INSTALLED"/>
+        <Condition Message="This application requires Windows 7 or later">VersionNT >= 601</Condition>
+        <Condition Message="This application requires .NET Framework 4.6.2. Please install the .NET Framework then run this installer again.">
+            <![CDATA[Installed OR WIX_IS_NETFRAMEWORK_462_OR_LATER_INSTALLED]]>
+        </Condition>
+        <MediaTemplate EmbedCab="yes"/>
+
+		<Feature Id="ProductFeature" Title="InstallX86" Level="1">
+			<ComponentGroupRef Id="ProductComponents" />
+            <ComponentRef Id="ProgramMenuDir"/>
+            <MergeRef Id="Microsoft_VC141_CRT_x86.msm"/>
+        </Feature>
+        <UIRef Id="WixUI_Minimal" />
+        <WixVariable Id="WixUILicenseRtf" Value="..\License.rtf" />
+        <Icon Id="TrivialAdifLoggerIcon.exe" SourceFile="..\TrivialAdifLogger\TrivialAdifLogger.ico" />
+        <Property Id="ARPPRODUCTICON" Value="TrivialAdifLoggerIcon.exe" />
+    </Product>
+
+	<Fragment>
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="ProgramFilesFolder">
+				<Directory Id="INSTALLFOLDER" Name="Trivial ADIF Logger" />
+			</Directory>
+            <Directory Id="ProgramMenuFolder" Name="Programs">
+                <Directory Id="ProgramMenuDir" Name="Trivial ADIF Logger">
+                    <Component Id="ProgramMenuDir" Guid="{20776665-4CE6-4AD5-AF6E-174A974BFA57}">
+                        <RemoveFolder Id='ProgramMenuDir' On='uninstall' />
+                        <RegistryValue Root='HKCU' Key='Software\TrivialAdifLogger\Install' Type='string' Value='' KeyPath='yes' />
+                    </Component>
+                </Directory>
+            </Directory>
+            <Directory Id='DesktopFolder' Name='Desktop'/>
+            <Merge Id="Microsoft_VC141_CRT_x86.msm" DiskId='1'
+                  Language="1033" SourceFile="..\MsMsm\Microsoft_VC141_CRT_x86.msm"  />
+        </Directory>
+	</Fragment>
+
+	<Fragment>
+        <?define LocalBinDir=..\TrivialAdifLogger\bin\x86\Release\?>
+        <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+            <Component Id="TrivialAdifLogger" Guid="{8E28EECF-8F8C-488E-B3D3-20009B03BA63}" Win64="no">
+                <File Id="TrivialAdifLoggerExe" Name="TrivialAdifLogger.exe" 
+                      Source="$(var.LocalBinDir)TrivialAdifLogger.exe" KeyPath="yes">
+                    <Shortcut Icon="TrivialAdifLoggerIcon.exe"  Id="TrivialAdifLoggerExeSC" Name="Trivial ADIF Logger" Directory="ProgramMenuDir" Advertise="yes"/>
+                    <Shortcut Icon="TrivialAdifLoggerIcon.exe"  Id="DTTrivialAdifLoggerExeSC" Name="Trivial ADIF Logger" Directory="DesktopFolder" Advertise="yes"/>
+                </File>
+                <File Source="$(var.LocalBinDir)HamLibClr.dll" Name="HamLibClr.dll" />
+            </Component>
+            <Component Id="hamlib" Guid="{F4B24CFA-C717-4BE9-A27B-0DC5A7F66604}" >
+                <File Source="$(var.LocalBinDir)libhamlib-2.dll" Name="libhamlib-2.dll" />
+                <File Source="$(var.LocalBinDir)libusb-1.0.dll" Name="libusb-1.0.dll" />
+                <File Source="$(var.LocalBinDir)libwinpthread-1.dll" Name="libwinpthread-1.dll" />
+                <File Source="$(var.LocalBinDir)libgcc_s_sjlj-1.dll" Name="libgcc_s_sjlj-1.dll" />
+            </Component>
+            <Component Id="DirectX" Guid="{39B6FA40-D19C-497D-978A-3827DB3C990F}" Win64="no">
+                <File Id="d3dcsx_47_win10.dll" Source="..\DigiRite\x86\d3dcsx_47.dll" Name="d3dcsx.dll" KeyPath="yes" />
+                <RegistryValue Id="dxReg" Root="HKLM" Key="Software\DigiRite\Waterfall" Name="Directory" Type="string" Value="[INSTALLFOLDER]" />
+            </Component>
+            <Component Id="DigiRiteWaterfallEdit" Guid="{38B8A10C-9EDD-4182-A635-B473C61B45CC}" >  <!--GUID matches WriteLog-->
+                <File Source="..\DigiRite\x86\WriteLogWaterfallDigiRite.dll" Assembly=".net" KeyPath="yes"/>
+            </Component>
+            <Component Id="Waterfall" Guid="{433AA638-CC4C-40CB-A0CC-08BF0D058A18}">   <!--GUID matches WriteLog-->
+                <File Source="..\DigiRite\x86\WriteLogWaterfall-V3.dll" Assembly=".net" KeyPath="yes"/>
+            </Component>
+        </ComponentGroup>
+	</Fragment>
+</Wix>
