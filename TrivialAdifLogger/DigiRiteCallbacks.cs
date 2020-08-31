@@ -9,7 +9,7 @@ namespace AdifLog
     public class DigiRiteCallbacks 
         : StandardOleMarshalObject // put this object on STA thread so we don't have to sync with the UI thread
     {
-        public DigiRiteCallbacks(MainForm mf, LogBook lb, HamLibClr.Rig r)
+        public DigiRiteCallbacks(MainForm mf, LogBook lb, HamlibThreadWrapper r)
         {
             mainForm = mf;
             logBook = lb;
@@ -17,7 +17,7 @@ namespace AdifLog
         }
         private MainForm mainForm;
 
-        public HamLibClr.Rig rig { private get; set; } = null;
+        public HamlibThreadWrapper rig { private get; set; } = null;
         private LogBook logBook {  get;  set; } = null;
 
         [ComVisible(true)]

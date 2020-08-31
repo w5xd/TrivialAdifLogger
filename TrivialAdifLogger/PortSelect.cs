@@ -59,7 +59,7 @@ namespace AdifLog
             }
             comboBoxBaud.SelectedItem = sel;
             sel = null;
-            HamLibClr.Rig.listRigs((int model, string mfg, string modelname) =>
+           HamlibThreadWrapper.listRigs((int model, string mfg, string modelname) =>
             {
                 object v = new RigTypeEntry(model, mfg, modelname);
                 if (model == ModelNumber)

@@ -5,7 +5,6 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace AdifLog
@@ -38,6 +37,9 @@ namespace AdifLog
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
+            if (null != rig)
+                rig.Dispose();
+            rig = null;
             if (null != digirite)
             try
             {   // it might already be closed...
@@ -74,7 +76,8 @@ namespace AdifLog
                 }
         }
 
-        private HamLibClr.Rig rig;
+        private HamlibThreadWrapper rig;
+
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         { Close();  }
@@ -87,12 +90,12 @@ namespace AdifLog
                 rig = null;
                 timer1.Enabled = false;
             }
-            rig = new HamLibClr.Rig(modelNumber);
+            rig = new HamlibThreadWrapper(modelNumber);
             if (!rig.open(comPort, baud))
             {
                 rig.Dispose();
                 rig = null;
-                MessageBox.Show("Rig open failed");
+                MessageBox.Show("Rig open failed", "Trivial ADIF Logger");
             }
             else
             {
@@ -104,6 +107,17 @@ namespace AdifLog
 
         private void initDigiRite()
         {
+            if (null != digirite)
+            {
+                try
+                {
+                    digiriteType.InvokeMember("GetCurrentMode", System.Reflection.BindingFlags.InvokeMethod, null, digirite, null);
+                }
+                catch (System.Exception)
+                {   // if cannot invoke "GetCurrentMode" then it must be gone.
+                    digirite = null;
+                }
+            }
             if (null == digirite)
             {   // goop to get DigiRite started and plumbed back to us
                 digiriteType = Type.GetTypeFromProgID("DigiRite.Ft8Auto");
@@ -136,15 +150,12 @@ namespace AdifLog
             }
         }
 
-        private void timer1_Tick(object sender, EventArgs e)
+        bool prevPollCompleted = true;
+
+        private void onPollComplete(double rxKhz, double txKhz, HamLibClr.Mode_t mode, bool split)
         {
-            if (null != rig)
-            {
-                double rxKhz = 0;
-                double txKhz = 0;
-                HamLibClr.Mode_t mode = HamLibClr.Mode_t.MODE_AM;
-                bool split = false;
-                if (rig.getFrequencyAndMode(ref rxKhz, ref txKhz, ref mode, ref split))
+            if (!IsDisposed)
+                BeginInvoke(new Action(() =>
                 {
                     string m = "Phone";
                     switch (mode)
@@ -157,8 +168,14 @@ namespace AdifLog
                             break;
                     }
                     labelFreq.Text = String.Format("{0:0.00} KHz {1}", rxKhz, m);
-                }
-            }
+                    prevPollCompleted = true;
+                }));
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            if (null != rig && prevPollCompleted)
+                rig.poll(new HamlibThreadWrapper.Pollcallback(onPollComplete));
         }
 
         private string fileSavePath;
