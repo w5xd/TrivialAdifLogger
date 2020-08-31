@@ -15,11 +15,14 @@ namespace AdifLog
             logBook = lb;
             rig = r;
         }
-        private MainForm mainForm;
 
+        #region state
+        private MainForm mainForm;
         public HamlibThreadWrapper rig { private get; set; } = null;
         private LogBook logBook {  get;  set; } = null;
+        #endregion
 
+        #region called from DigiRite
         [ComVisible(true)]
         public string CallUsed { get; set; } = "";
 
@@ -153,5 +156,6 @@ namespace AdifLog
         public void SetTransmitFocus()
         {   // nothing to do here.
         }
+        #endregion
     }
 }

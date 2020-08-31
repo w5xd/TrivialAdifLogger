@@ -113,32 +113,25 @@ namespace HamLibClr {
         {   // turn split OFF
             if (!m_rig)
                 return false;
-            return RIG_OK == rig_set_split_vfo(m_rig, RIG_VFO_CURR, split_t::RIG_SPLIT_OFF, RIG_VFO_CURR) &&
-                    RIG_OK == rig_set_freq(m_rig, RIG_VFO_CURR, txrxKhz * 1000.0);
+            return RIG_OK == rig_set_split_vfo(m_rig, RIG_VFO_A, split_t::RIG_SPLIT_OFF, RIG_VFO_A) &&
+                    RIG_OK == rig_set_freq(m_rig, RIG_VFO_A, txrxKhz * 1000.0);
         }
 
         bool Rig::setSplit(double rxKhz, double txKhz)
         {
             if (!m_rig)
                 return false;
-            // hamlib on K3 won't go to split mode unless vfo modes match cuz k3 refuses 
-            rmode_t hlmode;  pbwidth_t hlwidth;
-            if (RIG_OK != rig_get_mode(m_rig, RIG_VFO_CURR, &hlmode, &hlwidth))
-                return false;
-            if (RIG_OK != rig_set_mode(m_rig, RIG_VFO_B, hlmode, hlwidth))
-                return false;
-            if (RIG_OK != rig_set_mode(m_rig, RIG_VFO_A, hlmode, hlwidth))
-                return false;
-            split_t sp = split_t::RIG_SPLIT_ON;
-            vfo_t tx_vfo;
-            if (RIG_OK == rig_set_split_vfo(m_rig, RIG_VFO_A, sp, RIG_VFO_B))
+            // match VFOB to current
+            if (RIG_OK == rig_set_mode(m_rig, RIG_VFO_B, m_rig->state.current_mode, m_rig->state.current_width))
             {
-                if (RIG_OK == rig_get_split_vfo(m_rig, RIG_VFO_CURR, &sp, &tx_vfo))
+                if (RIG_OK == rig_set_freq(m_rig, RIG_VFO_A, rxKhz * 1000))
                 {   // 1000 is kHz to Hz
-                    if (RIG_OK == rig_set_freq(m_rig, tx_vfo, txKhz * 1000))
+                    if (RIG_OK == rig_set_freq(m_rig, RIG_VFO_B, txKhz * 1000))
                     {
-                        if (RIG_OK == rig_set_freq(m_rig, RIG_VFO_CURR, rxKhz * 1000))
+                        if (RIG_OK == rig_set_split_vfo(m_rig, RIG_VFO_A, split_t::RIG_SPLIT_ON, RIG_VFO_B))
+                        {
                             return true;
+                        }
                     }
                 }
             }
@@ -168,21 +161,21 @@ namespace HamLibClr {
                 rm = RIG_MODE_FM;
                 break;
             }
-            return RIG_OK == rig_set_mode(m_rig, RIG_VFO_CURR, rm, RIG_PASSBAND_NOCHANGE);
+            return RIG_OK == rig_set_mode(m_rig, RIG_VFO_A, rm, RIG_PASSBAND_NOCHANGE);
         }
 
         bool Rig::PTT::get()
         {
             ptt_t ptt = ptt_t::RIG_PTT_OFF;
             if (m_rig)
-                rig_get_ptt(m_rig, RIG_VFO_CURR, &ptt);
+                rig_get_ptt(m_rig, RIG_VFO_A, &ptt);
             return ptt != ptt_t::RIG_PTT_OFF;
         }
 
         void Rig::PTT::set(bool p)
         {
             if (m_rig)
-                rig_set_ptt(m_rig, RIG_VFO_CURR, p ? ptt_t::RIG_PTT_ON : ptt_t::RIG_PTT_OFF);
+                rig_set_ptt(m_rig, RIG_VFO_A, p ? ptt_t::RIG_PTT_ON : ptt_t::RIG_PTT_OFF);
         }
 
         Rig::~Rig()

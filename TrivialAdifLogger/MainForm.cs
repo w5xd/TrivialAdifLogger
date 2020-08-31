@@ -16,9 +16,18 @@ namespace AdifLog
             InitializeComponent();
         }
 
+        #region state
+        private LogBook logBook = new LogBook();
         private object digirite;
         private Type digiriteType;
-        private LogBook logBook = new LogBook();
+        private HamlibThreadWrapper rig;
+        private DigiRiteCallbacks callbacks;
+        private bool prevPollCompleted;
+
+        private string fileSavePath;
+        private bool isDirty = false;
+        private bool isReading = false;
+        #endregion
 
         private void MainForm_Load(object sender, EventArgs e)
         {
@@ -76,12 +85,9 @@ namespace AdifLog
                 }
         }
 
-        private HamlibThreadWrapper rig;
-
-
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         { Close();  }
-
+        
         private bool initHamLib(int modelNumber, string comPort, uint baud)
         {
             if (null != rig)
@@ -100,32 +106,34 @@ namespace AdifLog
             else
             {
                 timer1.Enabled = true;
+                if (null != callbacks)
+                    callbacks.rig = rig;
                 return true;
             }
             return false;
         }
-
+        
         private void initDigiRite()
         {
             if (null != digirite)
-            {
+            {   // check if our digirite object is still alive
                 try
                 {
                     digiriteType.InvokeMember("GetCurrentMode", System.Reflection.BindingFlags.InvokeMethod, null, digirite, null);
                 }
                 catch (System.Exception)
-                {   // if cannot invoke "GetCurrentMode" then it must be gone.
-                    digirite = null;
-                }
+                { digirite = null; } /*  if cannot invoke "GetCurrentMode" then it must be gone.*/
             }
             if (null == digirite)
-            {   // goop to get DigiRite started and plumbed back to us
+            {   // goop to get DigiRite started and plumbed to us
                 digiriteType = Type.GetTypeFromProgID("DigiRite.Ft8Auto");
                 digirite = Activator.CreateInstance(digiriteType);
                 digiriteType.InvokeMember("SetLoggerAssemblyName", System.Reflection.BindingFlags.InvokeMethod,
                     null, digirite, new object[] { "DigiRiteComLogger" });
+                if (null == callbacks)
+                    callbacks = new DigiRiteCallbacks(this, logBook, rig);
                 digiriteType.InvokeMember("SetWlEntry", System.Reflection.BindingFlags.InvokeMethod, null, digirite,
-                    new object[] { new DigiRiteCallbacks(this, logBook, rig), 1 });
+                    new object[] { callbacks, 1 });
                 digiriteType.InvokeMember("Show", System.Reflection.BindingFlags.InvokeMethod, null, digirite, new object[0]);
             }
         }
@@ -150,10 +158,9 @@ namespace AdifLog
             }
         }
 
-        bool prevPollCompleted = true;
 
         private void onPollComplete(double rxKhz, double txKhz, HamLibClr.Mode_t mode, bool split)
-        {
+        {   // from hamlib thread
             if (!IsDisposed)
                 BeginInvoke(new Action(() =>
                 {
@@ -176,11 +183,10 @@ namespace AdifLog
         {
             if (null != rig && prevPollCompleted)
                 rig.poll(new HamlibThreadWrapper.Pollcallback(onPollComplete));
+            else
+                prevPollCompleted = true; // turn timer back on once per tick
         }
 
-        private string fileSavePath;
-        private bool isDirty = false;
-        private bool isReading = false;
 
         private string FileSavePath
         {
