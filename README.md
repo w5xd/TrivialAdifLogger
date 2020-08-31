@@ -2,6 +2,14 @@
 Minimal logging program based on ADIF and works with DigiRite
 
 DigiRite needs an external program to log its QSOs. Here is one. 
+An already-built installer is available here:
+https://github.com/w5xd/TrivialAdifLogger/tree/master/InstallX86/bin/Release
+
+<p align='center'><img src='screen-shot-01.png' alt='screen-shot-01.png' /></p>
+All Trivial ADIF logger can do is read and write ADIF files, and connect itself to DigiRite.
+You need DigiRite already installed.
+
+<h2>How to build from sources</h2>
 
 Requires hamlib. Currently built with Hamlib version 3.3
 https://github.com/Hamlib/Hamlib/releases/tag/3.3
