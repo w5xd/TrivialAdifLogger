@@ -24,7 +24,7 @@ namespace AdifLog
 
         private void AboutForm_Load(object sender, EventArgs e)
         {
-            richTextBox.Text = "Copyright (c) 2020 by WriteLog Contesting Software, LLC. "+
+            richTextBox.Text = "Trivial ADIF Logger version 1.0.1.0.\r\nCopyright © 2020 by WriteLog Contesting Software, LLC. " +
                 "Published with source code and under the MIT license. See https://github.com/w5xd/TrivialAdifLogger\r\n\r\n" +
                 "Rig control thanks to hamlib, licensed under the LGPL. See https://github.com/Hamlib\r\n" +
                 "";
