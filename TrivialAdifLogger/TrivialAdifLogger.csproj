@@ -76,6 +76,12 @@
     </Compile>
     <Compile Include="Adif.cs" />
     <Compile Include="DigiRiteCallbacks.cs" />
+    <Compile Include="FrequencyForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrequencyForm.Designer.cs">
+      <DependentUpon>FrequencyForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="GridRowItem.cs" />
     <Compile Include="HamlibThreadWrapper.cs" />
     <Compile Include="LogBook.cs" />
@@ -95,6 +101,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="AboutForm.resx">
       <DependentUpon>AboutForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrequencyForm.resx">
+      <DependentUpon>FrequencyForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>

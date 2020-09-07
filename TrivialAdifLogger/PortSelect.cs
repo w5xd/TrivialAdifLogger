@@ -43,7 +43,7 @@ namespace AdifLog
             foreach (string s in System.IO.Ports.SerialPort.GetPortNames())
             {
                 comboBoxPorts.Items.Add(s);
-                if (ComPort.ToUpper() == s.ToUpper())
+                if (ComPort?.ToUpper() == s.ToUpper())
                     sel = s;
             }
             comboBoxPorts.SelectedItem = sel;
@@ -59,10 +59,12 @@ namespace AdifLog
             }
             comboBoxBaud.SelectedItem = sel;
             sel = null;
-           HamlibThreadWrapper.listRigs((int model, string mfg, string modelname) =>
+            HamlibThreadWrapper.listRigs((int model, string mfg, string modelname) =>
             {
                 object v = new RigTypeEntry(model, mfg, modelname);
                 if (model == ModelNumber)
+                    sel = v;
+                else if (null == sel && model == DUMMY_HAMLIB_RIG)
                     sel = v;
                 comboBoxRigSel.Items.Add(v);
             });
@@ -78,16 +80,21 @@ namespace AdifLog
             object baud = comboBoxBaud.SelectedItem;
             if (null != baud && NullItem != baud)
                 Baud = UInt32.Parse(baud.ToString());
-            ComPort = comboBoxPorts.SelectedItem.ToString();
+            ComPort = comboBoxPorts.SelectedItem?.ToString();
             RigTypeEntry rs = comboBoxRigSel.SelectedItem as RigTypeEntry;
             if (null != rs)
                 ModelNumber = rs.modelNumber;            
         }
 
+        const int DUMMY_HAMLIB_RIG = 1;
+
         private void check_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if ((null != comboBoxPorts.SelectedItem) && (null != comboBoxRigSel.SelectedItem))
-                buttonOK.Enabled = true;
+            RigTypeEntry re = comboBoxRigSel.SelectedItem as RigTypeEntry;
+            bool isDummy = re?.modelNumber == DUMMY_HAMLIB_RIG;
+            buttonOK.Enabled = (null != re) && (isDummy || (null != comboBoxPorts.SelectedItem));
+            if (isDummy)
+                comboBoxPorts.SelectedItem = null;
         }
     }
 }

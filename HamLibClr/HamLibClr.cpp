@@ -44,7 +44,8 @@ namespace HamLibClr {
         {
             if (!m_rig)
                 return false;
-            strncpy_s(m_rig->state.rigport.pathname, msclr::interop::marshal_as<std::string>(port).c_str(), FILPATHLEN - 1);
+            if (nullptr != port)
+                strncpy_s(m_rig->state.rigport.pathname, msclr::interop::marshal_as<std::string>(port).c_str(), FILPATHLEN - 1);
             if (baud)
                 m_rig->state.rigport.parm.serial.rate = baud;
             return RIG_OK == rig_open(m_rig);

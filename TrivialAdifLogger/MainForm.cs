@@ -138,26 +138,6 @@ namespace AdifLog
             }
         }
 
-        private void rigSetupToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var f = new PortSelect();
-            if ((f.ModelNumber = Properties.Settings.Default.HamlibRigType) > 0)
-            {
-                f.ComPort = Properties.Settings.Default.RigCommPort;
-                f.Baud = Properties.Settings.Default.RigBaudRate;
-            }
-            if (f.ShowDialog(this) == DialogResult.OK)
-            {
-                if (initHamLib(f.ModelNumber, f.ComPort, f.Baud))
-                {
-                    Properties.Settings.Default.HamlibRigType = f.ModelNumber;
-                    Properties.Settings.Default.RigBaudRate = f.Baud;
-                    Properties.Settings.Default.RigCommPort = f.ComPort;
-                    initDigiRite();
-                }
-            }
-        }
-
 
         private void onPollComplete(double rxKhz, double txKhz, HamLibClr.Mode_t mode, bool split)
         {   // from hamlib thread
@@ -186,7 +166,6 @@ namespace AdifLog
             else
                 prevPollCompleted = true; // turn timer back on once per tick
         }
-
 
         private string FileSavePath
         {
@@ -295,9 +274,49 @@ namespace AdifLog
 
         private void getStartedToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Use the File Menu 'Setup Rig' to choose your rig type and COM port and, if needed,"+
-                " the baud rate of your rig. Successfully configuring a rig brings up DigiRite.\r\n\r\n" +
+            MessageBox.Show("Use the Rig Menu 'Choose..' to choose your rig type and COM port and, if needed,"+
+                " the baud rate of your rig. Rig type 'HamLib Dummy' needs no rig and allows you to type a frequency in.  Successfully configuring a rig brings up DigiRite.\r\n\r\n" +
                 "File/Open to resume an old log, if needed. File/Save to save it to ADIF. Use the ADIF tool of your choice to edit the log.");
+        }
+
+        private void setupToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var f = new PortSelect();
+            if ((f.ModelNumber = Properties.Settings.Default.HamlibRigType) > 0)
+            {
+                f.ComPort = Properties.Settings.Default.RigCommPort;
+                f.Baud = Properties.Settings.Default.RigBaudRate;
+            }
+            if (f.ShowDialog(this) == DialogResult.OK)
+            {
+                if (initHamLib(f.ModelNumber, f.ComPort, f.Baud))
+                {
+                    Properties.Settings.Default.HamlibRigType = f.ModelNumber;
+                    Properties.Settings.Default.RigBaudRate = f.Baud;
+                    Properties.Settings.Default.RigCommPort = f.ComPort;
+                    initDigiRite();
+                }
+            }
+        }
+
+        private void setFrequencyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (null != rig)
+            {
+                double rxKhz = 0;
+                double txKhz = 0;
+                HamLibClr.Mode_t mode = HamLibClr.Mode_t.MODE_CW;
+                bool split = false;
+                rig.getFrequencyAndMode(ref rxKhz, ref txKhz, ref mode, ref split);
+                var dlg = new FrequencyForm();
+                dlg.Khz = rxKhz;
+                dlg.mode = mode;
+                if (dlg.ShowDialog(this) == DialogResult.OK)
+                {
+                    rig.setMode(dlg.mode);
+                    rig.setTransceive(dlg.Khz);
+                }
+            }
         }
     }
 }
